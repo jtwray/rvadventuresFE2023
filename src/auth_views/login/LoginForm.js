@@ -7,8 +7,17 @@ import { useStyles } from "../../utils/useStyles";
 import { LoadingClackers } from "../../utils/LoadingClackers";
 
 export default function LoginForm(props) {
+  const { showForm } = props;
+  // const welcomeHeaderRef = React.useRef();
+  // const { welcomeHeaderRef } = props.welcomeHeaderRef;
+
   const { register, handleSubmit, errors, formState } = useForm({
-    defaultValues: { username: "", email: "", password: "", terms: false }
+    defaultValues: {
+      username: "demo",
+      email: "d@em.o",
+      password: "demodemo",
+      terms: false,
+    },
   });
   const history = useHistory();
   const classes = useStyles();
@@ -19,14 +28,61 @@ export default function LoginForm(props) {
     margin: "0 auto",
     display: "flex",
     justifyContent: "space-evenly",
-    alignItems: "center"
+    alignItems: "center",
   };
+  // React.useLayoutEffect(() => {
+  //   console.log({ showForm, refCurr: welcomeHeaderRef.current });
+  //   if (showForm) {
+  //     welcomeHeaderRef.current.style = {
+  //       transform: "translateY(-10px)",
+  //       transition: "all 3.5s ease 0s",
+  //       textAlign: "center",
+  //     };
+  //   } else {
+  //     //  welcomeHeaderRef.current.style.transform = "translateY(-10px)";
+  //     // welcomeHeaderRef.current.style.transition = "all 3.5s ease 0s";
+  //     // welcomeHeaderRef.current.style.textAlign = "center";
+  //     welcomeHeaderRef.current.style = {
+  //       transform: "translateY(10px)",
+  //       transition: "all 3.5s ease 0s",
+  //       textAlign: "center",
+  //     };
+  //   }
+  // }, [showForm]);
   return (
     <>
-      <Avatar className={classes.avatar}>
+      <Avatar
+        className={classes.avatar}
+        style={{
+          backgroundColor: "indigo",
+          zIndex: "unset",
+          zIndex: "4 !important",
+        }}
+      >
         <LockOutlinedIcon />
       </Avatar>
-      Welcome Back Stranger
+      <div
+        style={{
+          overflow: "hidden",
+          height: 20,
+          background: "#5559ff",
+          width: "100%",
+          color: "white",
+          fontSize: 20,
+        }}
+      >
+        <p
+          style={{
+            transition: showForm ? "all .3s ease 1.4s" : "all .3s ease 0s",
+            textAlign: "center",
+            transform: showForm ? "translateY(-10px)" : "translateY(10px)",
+            zIndex: 9,
+          }}
+        >
+          Welcome Back Stranger
+        </p>
+        {/* <p ref={welcomeHeaderRef}> Welcome Back Stranger</p> */}
+      </div>
       <form
         style={{ ...authFormSTYLE, fontSize: "4rem" }}
         onSubmit={handleSubmit(async (formData) => {
@@ -41,57 +97,38 @@ export default function LoginForm(props) {
           setSubmitting(false);
         })}
       >
-        <div className="input">
-          {dirtyFields.username ? (
-            <label className="isDirty" htmlFor="username">
-              Username
-            </label>
-          ) : (
-            <label htmlFor="username">Username</label>
-          )}
-          <input
-            type="text"
-            name="username"
-            id="username"
-            ref={register({ required: "required" })}
-          />
-          {errors.username ? <p> what's your username? </p> : null}
-        </div>
-        <div className="input">
-          {dirtyFields.email ? (
-            <label className="isDirty" htmlFor="email">
-              Email
-            </label>
-          ) : (
-            <label htmlFor="email">Email</label>
-          )}
-          <input
-            autoComplete="off"
-            type="email"
-            name="email"
-            id="email"
-            ref={register({ required: "required" })}
-          />
-          {errors.email ? <p> provide an email </p> : null}
-        </div>
-        <div className="input">
-          {dirtyFields.password ? (
-            <label className="isDirty" htmlFor="password">
-              Password
-            </label>
-          ) : (
-            <label htmlFor="password">Password</label>
-          )}
-          <input
-            autoComplete="off"
-            type="password"
-            name="password"
-            id="password"
-            ref={register({ required: "required" })}
-          />
-          {errors.password ? <p>password required</p> : null}
-        </div>
-        <div className="termsContainer">
+        <InputAnimated
+          errText="What's your username?"
+          inputAutoComplete="off"
+          inputID="username"
+          inputLabelText="Username"
+          register={register({ required: "required" })}
+          inputType="username"
+          isDirty={!!dirtyFields.username}
+          isErr={!!errors.username}
+        />
+        <InputAnimated
+          errText="Please provide an email."
+          inputAutoComplete="off"
+          inputID="email"
+          inputLabelText="Email"
+          register={register({ required: "required" })}
+          inputType="email"
+          isDirty={!!dirtyFields.email}
+          isErr={!!errors.email}
+        />
+        <InputAnimated
+          errText="Password is required."
+          inputAutoComplete="off"
+          inputID="password"
+          inputLabelText="Password"
+          inputType="password"
+          isDirty={!!dirtyFields.password}
+          isErr={!!errors.password}
+          register={register({ required: "required" })}
+        />
+
+        <div className="termsContainer" style={{ filter: "#ffffff" }}>
           <input type="checkbox" name="terms" id="terms" ref={register()} />
           <label htmlFor="terms">Remember Me</label>
         </div>
@@ -115,7 +152,7 @@ export default function LoginForm(props) {
         style={{
           display: "flex",
           width: "90%",
-          justifyContent: "flex-end"
+          justifyContent: "flex-end",
         }}
       >
         <p
@@ -123,7 +160,7 @@ export default function LoginForm(props) {
             fontSize: "1rem",
             margin: "0",
             paddingRight: "1rem",
-            width: "auto"
+            width: "auto",
           }}
         >
           don't have an account?
@@ -131,6 +168,40 @@ export default function LoginForm(props) {
             signup
           </Link>
         </p>
+      </div>
+    </>
+  );
+}
+
+function InputAnimated({
+  register,
+  errText = "error",
+  inputAutoComplete = "off",
+  inputID = "username",
+  inputLabelText = "Username",
+  inputType = "text",
+  isDirty = "false",
+  isErr = "false",
+}) {
+  return (
+    <>
+      <div className="input">
+        {isDirty ? (
+          <label className="isDirty" htmlFor={inputID}>
+            {inputLabelText}
+          </label>
+        ) : (
+          <label htmlFor={inputID}>{inputLabelText}</label>
+        )}
+        <input
+          autoComplete={inputAutoComplete}
+          type={inputType}
+          name={inputID}
+          id={inputID}
+          ref={register}
+          style={{ textAlign: "end" }}
+        />
+        {!!isErr ? <p>{errText}</p> : null}
       </div>
     </>
   );
