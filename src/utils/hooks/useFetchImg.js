@@ -5,7 +5,9 @@ export function useFetchImg(images, setImages) {
     if (images.length < 1) {
       axios
         .get(
-          `https://api.unsplash.com/photos/random?query=camper+life&count=10&client_id=${process.env.REACT_APP_UNSPLASH_API}`
+          `https://api.unsplash.com/photos/random?query=camper+life&count=10
+          &client_id=${process.env.REACT_APP_CLIENT_ID}`
+          // &client_id=${process.env.REACT_APP_UNSPLASH_API}`REACT_APP_CLIENT_ID
         )
         .then((response) =>
           setImages(
@@ -14,7 +16,7 @@ export function useFetchImg(images, setImages) {
                 (images[idx] = {
                   alt_description: imgObj.alt_description,
                   title: imgObj.description,
-                  urls: imgObj.urls
+                  urls: imgObj.urls,
                 })
             )
           )
